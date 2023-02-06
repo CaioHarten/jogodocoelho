@@ -9,52 +9,65 @@ const Composite = Matter.Composite;
 
 let engine;
 let world;
-var ball;
-var blower;
-var blowerMouth;
-var button;
+var ground, bridge;
+var leftWall, rightWall;
+var jointPoint;
+var jointLink;
+
+var stones = [];
 
 function setup() {
-  var canvas = createCanvas(500, 500);
-
+  createCanvas(windowWidth, windowHeight);
   engine = Engine.create();
   world = engine.world;
+  frameRate(80);
 
-  ball = new Ball(width / 2 + 80, height / 2 - 80, 80, 80);
-  blower = new Blower(width / 2 - 50, height / 2 + 50, 150, 20);
-  blowerMouth = new BlowerMouth(width / 2 + 70, height / 2 + 20, 100, 90);
-  button = createButton("Clique para Assoprar");
-  button.position(width / 2, height - 100);
-  button.class("blowButton");
+  ground = new Base(0, height - 10, width * 2, 20, "#795548", true);
+  leftWall = new Base(300, height / 2 + 50, 600, 100, "#8d6e63", true);
+  rightWall = new Base(width - 300, height / 2 + 50, 600, 100, "#8d6e63", true);
 
-  button.mousePressed(blow);
+  /*bridge = new Base(15, { x: width / 2 - 400, y: height / 2 });
+  jointPoint = new Base(width - 600, height / 2 + 10, 40, 20, "#8d6e63", true);*/
 
-  //buttonPressed(blow);
+  bridge = new Bridge(15, { x: width / 2 - 400, y: height / 2 });
+  jointPoint = new Base(width - 600, height / 2 + 10, 40, 20, "#8d6e63", true);
+
+  /*bridge = new Base(15, { x: width / 2 - 400, y: height / 2 });
+  jointPoint = new Bridge(width - 600, height / 2 + 10, 40, 20, "#8d6e63", true);*/
+
+  /*bridge = new Bridge(15, { x: width / 2 - 400, y: height / 2 });
+  jointPoint = new Bridge(width - 600, height / 2 + 10, 40, 20, "#8d6e63", true);*/
+
   
-  //button = mousePressed(blow);
-  
-  //button.mousePressed();
+  Matter.Composite.add(bridge.body, jointPoint);
 
+  //Matter.Composite.add(jointPoint);
+  
+  //Matter.Composite.add(jointPoint, bridge.body);
+  
+  //Matter.Composite.add(bridge.body);
+
+
+  jointLink = new Link(bridge, jointPoint);
+
+  for (var i = 0; i <= 8; i++) {
+    var x = random(width / 2 - 200, width / 2 + 300);
+    var y = random(-10, 140);
+    var stone = new Stone(x, y, 80, 80);
+    stones.push(stone);
+  }
 }
 
 function draw() {
-  background(59);
+  background(51);
   Engine.update(engine);
 
-  blower.show();
-  ball.show();
-  blowerMouth.show();
+  ground.show();
+  bridge.show();
+  leftWall.show();
+  rightWall.show();
+
+  for (var stone of stones) {
+    stone.show();
+  }
 }
-
-function blow() {
-
-  //Matter.Body.applyForce(ball.body, {x:0, y:0}, {x:0, y:-0.05});
-
-  Matter.Body.applyForce(ball.body, {x:0, y:0}, {x:0, y:0.05});
-  
-  //Matter.Body.applyForce(ball.body, {x:0, y:0}, {x:0.05, y:0.05});
-  
-  //Matter.Body.applyForce(ball.body, {x:0, y:0}, {x:-0.05, y:0});
-
-}
-
